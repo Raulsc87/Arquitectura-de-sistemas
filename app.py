@@ -3,7 +3,6 @@ from flask import Flask, jsonify, request
 app = Flask(__name__)
 
 
-# Esta lista funciona como una base de datos temporal
 productos = [
     {
         "id": 1,
