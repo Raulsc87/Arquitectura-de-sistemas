@@ -171,3 +171,80 @@ Si aparece el siguiente mensaje, significa que todo está correcto:
 ```text
 System check identified no issues (0 silenced).
 ```
+
+## Autenticación JWT
+
+Todos los endpoints de `/api/` requieren un access token JWT válido. Sin token,
+la API responde `401 Unauthorized`. Las rutas de obtención, renovación y
+verificación de tokens permiten solicitudes POST sin autenticación.
+
+Los tokens utilizan los usuarios incorporados de Django (`django.contrib.auth`),
+independientes del modelo `Usuario` de la aplicación `usuarios`.
+
+### 1. Crear un superusuario
+
+Con el entorno virtual activo y las migraciones aplicadas, ejecutar:
+
+```powershell
+python manage.py createsuperuser
+```
+
+Introducir el nombre de usuario, correo y contraseña cuando Django los solicite.
+Iniciar la API con `python manage.py runserver`.
+
+### 2. Obtener los tokens
+
+Enviar un POST a `http://127.0.0.1:8000/api/token/` con JSON:
+
+```json
+{
+  "username": "usuario_ejemplo",
+  "password": "CONTRASENA_DE_EJEMPLO"
+}
+```
+
+Estos valores son ejemplos: sustituirlos por los datos del usuario de Django.
+La respuesta contiene `access` y `refresh`.
+
+### 3. Usar el access token
+
+Enviar el valor de `access` en el encabezado de cada solicitud a la API:
+
+```yaml
+Authorization: Bearer ACCESS_TOKEN
+```
+
+Por ejemplo, desde PowerShell:
+
+```powershell
+Invoke-RestMethod -Uri 'http://127.0.0.1:8000/api/' -Headers @{Authorization = 'Bearer ACCESS_TOKEN'}
+```
+
+Sustituir `ACCESS_TOKEN` por el token recibido. Abrir la URL directamente en el
+navegador sin ese encabezado devuelve `401`.
+
+### 4. Renovar el access token
+
+Enviar un POST a `http://127.0.0.1:8000/api/token/refresh/` con JSON:
+
+```json
+{
+  "refresh": "REFRESH_TOKEN"
+}
+```
+
+La respuesta contiene un nuevo `access`. Usarlo en las siguientes solicitudes.
+
+### 5. Verificar un token
+
+Enviar un POST a `http://127.0.0.1:8000/api/token/verify/` con JSON:
+
+```json
+{
+  "token": "ACCESS_TOKEN"
+}
+```
+
+Un token válido devuelve `200 OK` con `{}`; uno inválido o vencido devuelve `401`.
+Los POST anteriores deben incluir `Content-Type: application/json`.
+No guardar contraseñas ni tokens reales en los archivos del repositorio.
