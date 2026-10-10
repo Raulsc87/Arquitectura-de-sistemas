@@ -1,0 +1,61 @@
+name: Publicar frontend en AWS
+
+on:
+  push:
+    branches: [hw-04]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: frontend-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/hw-04'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION }}
+      S3_BUCKET: ${{ vars.S3_BUCKET }}
+      CLOUDFRONT_DISTRIBUTION_ID: ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}
+      AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Comprobar variables
+        shell: bash
+        run: |
+          set -euo pipefail
+          for name in AWS_REGION S3_BUCKET CLOUDFRONT_DISTRIBUTION_ID AWS_ROLE_ARN; do
+            if [[ -z "${!name}" ]]; then
+              echo "::error::Falta configurar la variable $name"
+              exit 1
+            fi
+          done
+      - name: Instalar dependencias
+        working-directory: frontend
+        run: npm ci
+      - name: Build
+        working-directory: frontend
+        run: npm run build
+      - name: Autenticarse mediante OIDC
+        uses: aws-actions/configure-aws-credentials@v6.3.0
+        with:
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Upload
+        run: aws s3 sync frontend/dist/ "s3://$S3_BUCKET/" --delete --only-show-errors
+      - name: Invalidate
+        run: aws cloudfront create-invalidation --distribution-id "$CLOUDFRONT_DISTRIBUTION_ID" --paths '/*'
