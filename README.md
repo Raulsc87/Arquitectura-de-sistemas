@@ -91,7 +91,7 @@ git push -u origin hw-04
 Después de cada despliegue, revisar Actions y abrir la URL pública. Comprobar la página, estilos, módulos y presentación móvil. Verificar que HTTP redirige a HTTPS. Si aparece 403, revisar OAC, bucket policy y `index.html`; si aparece una versión antigua, esperar a que termine la invalidación y recargar.
 
 - URL pública: https://d38z66x2o6eo7t.cloudfront.net
-- Ejecución exitosa: documentada en la captura del pipeline. El enlace directo al run todavía no se ha proporcionado.
+- [Pipeline ejecutado correctamente](https://github.com/Raulsc87/Arquitectura-de-sistemas/actions/runs/38032660124)
 - Capturas verificadas e incluidas a continuación; convertidas a PNG desde los archivos JPEG proporcionados, sin cambiar su contenido.
 
 ![Página publicada en CloudFront](docs/capturas/cloudfront-web.png)
