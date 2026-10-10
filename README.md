@@ -70,24 +70,33 @@ Los JSON de `docs/aws/` son plantillas. Sustituir `ACCOUNT_ID`, `BUCKET` y `DIST
 | `CLOUDFRONT_DISTRIBUTION_ID` | ID de la distribución, no su dominio |
 | `AWS_ROLE_ARN` | ARN completo del rol OIDC |
 
-No compartir contraseñas, tokens, claves de acceso ni claves privadas en el chat. Para continuar solo necesitamos la región, nombre del bucket, ID de distribución, ARN del rol y dominio público de CloudFront.
+La política de confianza usa el subject que funcionó en este repositorio, incluyendo los identificadores del propietario y del repositorio:
+
+```text
+repo:Raulsc87@124798826/Arquitectura-de-sistemas@1314565685:ref:refs/heads/hw-04
+```
+
+No compartir contraseñas, tokens, claves de acceso ni claves privadas en el chat.
 
 ### Publicar y reunir evidencias
 
-No se ha hecho push. Cuando autorices publicarlo y las variables estén configuradas, el siguiente comando desde esta rama activará el pipeline:
+La página está publicada en [CloudFront](https://d38z66x2o6eo7t.cloudfront.net). La captura pública muestra la página funcionando con sus estilos desde ese dominio. La captura de GitHub Actions confirma que el job `deploy` y sus pasos **Build → Upload → Invalidate** se ejecutaron correctamente, incluida la autenticación OIDC.
+
+Los cambios posteriores se publican con un nuevo push a `hw-04`. Este cambio de documentación se conserva en un commit local, sin hacer push:
 
 ```sh
 git push -u origin hw-04
 ```
 
-Después, revisar Actions y abrir `https://` seguido del dominio real de tu distribución. Comprobar la página, estilos, módulos y presentación móvil. Verificar que HTTP redirige a HTTPS. Si aparece 403, revisar OAC, bucket policy y `index.html`; si aparece una versión antigua, esperar a que termine la invalidación y recargar.
+Después de cada despliegue, revisar Actions y abrir la URL pública. Comprobar la página, estilos, módulos y presentación móvil. Verificar que HTTP redirige a HTTPS. Si aparece 403, revisar OAC, bucket policy y `index.html`; si aparece una versión antigua, esperar a que termine la invalidación y recargar.
 
-- URL real de CloudFront: **pendiente**.
-- Última ejecución exitosa y enlace a su run: **pendientes**.
-- Captura pública: **pendiente**, guardar `docs/capturas/pagina-cloudfront.png`.
-- Captura del pipeline exitoso: **pendiente**, guardar `docs/capturas/github-actions-exitoso.png`.
+- URL pública: https://d38z66x2o6eo7t.cloudfront.net
+- Ejecución exitosa: documentada en la captura del pipeline. El enlace directo al run todavía no se ha proporcionado.
+- Capturas verificadas e incluidas a continuación; convertidas a PNG desde los archivos JPEG proporcionados, sin cambiar su contenido.
 
-Agregar aquí la URL real, el enlace a la última ejecución exitosa e insertar las capturas cuando existan. La práctica no está terminada hasta comprobar ambos resultados. No se han creado recursos en tu cuenta AWS.
+![Página publicada en CloudFront](docs/capturas/cloudfront-web.png)
+
+![Pipeline exitoso](docs/capturas/pipeline-exitoso.png)
 
 ### Referencias oficiales
 

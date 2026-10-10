@@ -6,7 +6,7 @@
     "Action": "sts:AssumeRoleWithWebIdentity",
     "Condition": {"StringEquals": {
       "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
-      "token.actions.githubusercontent.com:sub": "repo:Raulsc87/Arquitectura-de-sistemas:ref:refs/heads/hw-04"
+      "token.actions.githubusercontent.com:sub": "repo:Raulsc87@124798826/Arquitectura-de-sistemas@1314565685:ref:refs/heads/hw-04"
     }}
   }]
 }
